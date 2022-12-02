@@ -2,6 +2,8 @@
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+const timeCounter = document.querySelector('h1 span');
+const ballCounter = document.querySelector('p span');
 
 const width = (canvas.width = window.innerWidth);
 const height = (canvas.height = window.innerHeight);
@@ -135,6 +137,9 @@ EvilCircle.prototype.setControls = function () {
             _this.y += _this.velY;
         }
     };
+    if(Number(timeCounter.innerHTML) === 0){
+        window.onkeydown = null;
+    }
 };
 
 EvilCircle.prototype.collisionDetect = function () {
@@ -146,6 +151,7 @@ EvilCircle.prototype.collisionDetect = function () {
 
             if (distance < this.size + elem.size) {
                 elem.exists = false;
+                ballCounter.innerHTML -= 1;
             }
         }
     }
@@ -154,6 +160,24 @@ EvilCircle.prototype.collisionDetect = function () {
 const balls = [];
 const evilCircle = new EvilCircle(random(0, width), random(0, height), true);
 evilCircle.setControls();
+
+setTimeout(changeTimer, 1000)
+
+function changeTimer(){
+    let temp = Number(timeCounter.innerHTML);
+    if(temp > 0){
+        temp -= 1;
+        timeCounter.innerHTML = temp;
+        setTimeout(changeTimer, 1000)
+    }
+    if(temp === 0){
+        const fail = document.createElement('h2');
+        const body = document.querySelector('body');
+        console.log(body)
+        fail.innerHTML = 'You lose!'
+        body.append(fail);
+    }
+}
 
 function lopp() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
@@ -176,6 +200,15 @@ function lopp() {
             random(10, 20)
         );
         balls.push(ball);
+    }
+
+    ballCounter.innerHTML = balls.filter(item => item.exists === true).reduce(sum => sum += 1, 0);
+
+    if(Number(timeCounter.innerHTML) === 0){
+        for(const elem of balls){
+            elem.exists = false;
+        }
+        evilCircle.setControls();
     }
 
     for (const elem of balls) {
