@@ -2,8 +2,8 @@
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-const timeCounter = document.querySelector('h1 span');
-const ballCounter = document.querySelector('p span');
+const timeCounter = document.querySelector("h1 span");
+const ballCounter = document.querySelector("p span");
 
 const width = (canvas.width = window.innerWidth);
 const height = (canvas.height = window.innerHeight);
@@ -137,11 +137,7 @@ EvilCircle.prototype.setControls = function () {
             _this.y += _this.velY;
         }
     };
-    if(Number(timeCounter.innerHTML) === 0){
-        window.onkeydown = null;
-    }
 };
-
 EvilCircle.prototype.collisionDetect = function () {
     for (const elem of balls) {
         if (elem.exists === true) {
@@ -161,21 +157,29 @@ const balls = [];
 const evilCircle = new EvilCircle(random(0, width), random(0, height), true);
 evilCircle.setControls();
 
-setTimeout(changeTimer, 1000)
+setTimeout(changeTimer, 1000);
 
-function changeTimer(){
+function changeTimer() {
     let temp = Number(timeCounter.innerHTML);
-    if(temp > 0){
+    if (temp === 0) {
+        const body1 = document.querySelector("body");
+            const fail = document.createElement("h2");
+            fail.innerHTML = "You lose!";
+            fail.classList.add("loseMessage");
+            body1.prepend(fail);
+    }
+    if (temp > 0 && Number(ballCounter.innerHTML) === 0) {
+        const body1 = document.querySelector("body");
+        const win = document.createElement("h2");
+        win.innerHTML = "You win!";
+        win.classList.add("winMessage");
+        body1.prepend(win);
+        return;
+    }
+    if (temp > 0) {
         temp -= 1;
         timeCounter.innerHTML = temp;
-        setTimeout(changeTimer, 1000)
-    }
-    if(temp === 0){
-        const fail = document.createElement('h2');
-        const body = document.querySelector('body');
-        console.log(body)
-        fail.innerHTML = 'You lose!'
-        body.append(fail);
+        setTimeout(changeTimer, 1000);
     }
 }
 
@@ -202,13 +206,14 @@ function lopp() {
         balls.push(ball);
     }
 
-    ballCounter.innerHTML = balls.filter(item => item.exists === true).reduce(sum => sum += 1, 0);
+    ballCounter.innerHTML = balls
+        .filter((item) => item.exists === true)
+        .reduce((sum) => (sum += 1), 0);
 
-    if(Number(timeCounter.innerHTML) === 0){
-        for(const elem of balls){
+    if (Number(timeCounter.innerHTML) === 0) {
+        for (const elem of balls) {
             elem.exists = false;
         }
-        evilCircle.setControls();
     }
 
     for (const elem of balls) {
